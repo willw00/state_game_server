@@ -13,16 +13,16 @@ module.exports = (app) => {
         const userName = req.query.user_name
         const password = req.query.password
 
-        userService.getUserHash(userName, 
-            (hash) => {
-                authenticator.comparePasswords(
-                    password, 
-                    hash, 
-                    () => { res.send(`User: ${userName} authenticated!`) }, 
-                    () => { res.send(`User: ${userName} not found or password incorrect!`) })
-            },
-            (userName) => res.send(`User: ${userName} not found or password incorrect`)
-        )
+        authenticator.login(userName, password, (jwt) => {
+            res.send(`JWT: ${jwt}`)
+        })
+    })
+
+    app.get('/test_jwt', (req, res) => {
+        const jwt = req.query.jwt
+        authenticator.validateJWT(jwt, (user) => {
+            res.send(user)
+        })
     })
 
     app.get('/new_user', (req, res) => {

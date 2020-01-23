@@ -27,7 +27,7 @@ class UserService {
             }
             if (res.rows.length > 0) {
                 const u = res.rows[0];
-                const user = new User(u.id, u.user_name, u.email)
+                const user = new User(u.id, u.user_name, u.email, u.pw_hash)
                 console.log(user)
                 userCallback(user)
             } else {
@@ -50,7 +50,7 @@ class UserService {
             }
             if (res.rows.length > 0) {
                 const u = res.rows[0];
-                const user = new User(u.id, u.user_name, u.email)
+                const user = new User(u.id, u.user_name, u.email, u.pw_hash)
                 console.log(user)
                 foundCallback(user)
             } else {
