@@ -21,10 +21,9 @@ rq.post({url:'http://localhost:3000/login', form: loginInput},
         }
         const b = JSON.parse(body)
         const token = b["token"]
-        console.log(body)
-        const testInput = {jwt: token}
-        console.log(testInput)
-        rq.post({url:'http://localhost:3000/test_jwt', form: testInput},
+        console.log(token)
+
+        rq.post('http://localhost:3000/test_jwt', {'auth': {'bearer': token}}, 
             (err, res, body) => {
                 if (err) {
                     console.log(err)

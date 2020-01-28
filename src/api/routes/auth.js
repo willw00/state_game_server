@@ -19,8 +19,10 @@ module.exports = (app) => {
     })
 
     app.post('/test_jwt', (req, res) => {
-        const jwt = req.body.jwt
-        authenticator.validateJWT(jwt, (user) => {
+        const beaderHeader = req.headers["authorization"]
+        const bearer = beaderHeader.split(" ")
+        const bearerToken = bearer[1]
+        authenticator.validateJWT(bearerToken, (user) => {
             res.send(user)
         })
     })
