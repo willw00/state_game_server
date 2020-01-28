@@ -9,26 +9,26 @@ function userExistsFn(user) {
 }
 
 module.exports = (app) => {
-    app.get('/login', (req, res) => {
-        const userName = req.query.user_name
-        const password = req.query.password
+    app.post('/login', (req, res) => {
+        const userName = req.body.user_name
+        const password = req.body.password
 
         authenticator.login(userName, password, (jwt) => {
-            res.send(`JWT: ${jwt}`)
+            res.send({token: jwt})
         })
     })
 
-    app.get('/test_jwt', (req, res) => {
-        const jwt = req.query.jwt
+    app.post('/test_jwt', (req, res) => {
+        const jwt = req.body.jwt
         authenticator.validateJWT(jwt, (user) => {
             res.send(user)
         })
     })
 
-    app.get('/new_user', (req, res) => {
-        const userName = req.query.user_name
-        const password = req.query.password
-        const email = req.query.email
+    app.post('/new_user', (req, res) => {
+        const userName = req.body.user_name
+        const password = req.body.password
+        const email = req.body.email
 
         userService.getUserByName(
             userName, 
