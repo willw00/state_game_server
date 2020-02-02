@@ -9,46 +9,25 @@ class Authenticator {
         this.secret = process.env.SECRET_KEY
     }
 
-    hashPassword(password, fn) {
-        bcrypt.hash(password, 10, (err, hash) => {
-            if (err) { 
-                console.log(err) 
-            }
-            
-            fn(hash)
-        })
+    async hashPassword(password) {
+        return bcrypt.hash(password, 10)
     }
 
-    login(userName, password, jwtCallback) {
-        userService.getUserByName(userName, (user) =>
-            bcrypt.compare(password, user.hash, (err, match) => {
-                if (err) {
-                    console.log(err)
-                }
-                if (match === true) {
-                    this.generateJWT(user, jwtCallback)
-                }
-            })
-        )
-    }
-
-    generateJWT(user, jwtCallback) {
-        jwt.sign(user.toJSON(), this.secret, (err, jwt) => {
-            if (err) {
-                console.log(err)
+    async login(user, password) {
+        try {
+            const match = await bcrypt.compare(password, user.hash)
+            if (match === true) {
+                return jwt.sign(user.toJSON(), this.secret)
             } else {
-                jwtCallback(jwt)
+                return null
             }
-        })
+        } catch (err) {
+            console.log(err.stack)
+        }
     }
 
-    validateJWT(inputJWT, userCallback) {
-        jwt.verify(inputJWT, this.secret, (err, decoded) => {
-            if (err) {
-                console.log(err)
-            }
-            userCallback(decoded)
-        })
+    async validateJWT(inputJWT) {
+        return jwt.verify(inputJWT, this.secret)
     }
 }
 

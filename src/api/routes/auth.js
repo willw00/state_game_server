@@ -4,42 +4,42 @@ const userService = new UserService(pool)
 const Authenticator = require('../middleware/authenticator.js')
 const authenticator = new Authenticator();
 
-function userExistsFn(user) {
-    console.log(`User with name ${user.userName} already exists!`)
-}
-
 module.exports = (app) => {
-    app.post('/login', (req, res) => {
+    app.post('/login', async (req, res) => {
         const userName = req.body.user_name
         const password = req.body.password
-
-        authenticator.login(userName, password, (jwt) => {
+        console.log(req.body)
+        const user = await userService.getUserByName(userName)
+        console.log(user)
+        const jwt = await authenticator.login(user, password)
+        if (jwt) {
             res.send({token: jwt})
-        })
+        } else {
+            res.send(`User ${userName} not found or password incorrect.`)
+        }
     })
 
-    app.post('/test_jwt', (req, res) => {
+    app.post('/test_jwt', async (req, res) => {
         const beaderHeader = req.headers["authorization"]
         const bearer = beaderHeader.split(" ")
         const bearerToken = bearer[1]
-        authenticator.validateJWT(bearerToken, (user) => {
-            res.send(user)
-        })
+        const user = await authenticator.validateJWT(bearerToken)
+        res.send(user)
     })
 
-    app.post('/new_user', (req, res) => {
+    app.post('/new_user', async (req, res) => {
         const userName = req.body.user_name
         const password = req.body.password
         const email = req.body.email
 
-        userService.getUserByName(
-            userName, 
-            userExistsFn,
-            (userName) => authenticator.hashPassword(password, (hash) => {
-                userService.newUser(userName, hash, email, (user) => {
-                    res.send(`Hello ${user.userName}!`)
-                })
-            })
-        )
+        const user = await userService.getUserByName(userName)
+
+        if (!user) {
+            const hash = await authenticator.hashPassword(password)
+            const newUser = await userService.newUser(userName, hash, email)
+            res.send(`Hello ${user.userName}!`)
+        } else {
+            res.send(`User name ${userName} already taken!`)
+        }
     })
 }
