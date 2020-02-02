@@ -11,27 +11,26 @@ rq.post({url:'http://localhost:3000/new_user', form: newInput},
             console.log(err)
         }
         console.log(body)
-    }
-)
 
-const loginInput = {user_name: userName, password: pw}
-rq.post({url:'http://localhost:3000/login', form: loginInput},
-    (err, res, body) => {
-        if (err) {
-            console.log(err)
-        }
-        const b = JSON.parse(body)
-        const token = b["token"]
-        console.log(token)
-
-        rq.post('http://localhost:3000/test_jwt', {'auth': {'bearer': token}}, 
+        const loginInput = {user_name: userName, password: pw}
+        rq.post({url:'http://localhost:3000/login', form: loginInput},
             (err, res, body) => {
                 if (err) {
                     console.log(err)
                 }
-                console.log(body)
+                const b = JSON.parse(body)
+                const token = b["token"]
+                console.log(token)
+
+                rq.post('http://localhost:3000/test_jwt', {'auth': {'bearer': token}}, 
+                    (err, res, body) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                        console.log(body)
+                    }
+                )
             }
         )
     }
 )
-

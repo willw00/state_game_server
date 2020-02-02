@@ -37,7 +37,7 @@ module.exports = (app) => {
         if (!user) {
             const hash = await authenticator.hashPassword(password)
             const newUser = await userService.newUser(userName, hash, email)
-            res.send(`Hello ${user.userName}!`)
+            res.send(`Hello ${newUser.userName}!`)
         } else {
             res.send(`User name ${userName} already taken!`)
         }

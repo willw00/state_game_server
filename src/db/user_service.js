@@ -10,6 +10,7 @@ class UserService {
             await this.connectionPool.query("INSERT INTO users (user_name, pw_hash, email) VALUES ($1, $2, $3)", [userName, passwordHash, email])
 
             const user = new User(0, userName, email)
+            console.log(`New user: ${user.userName}`)
             return user
         } catch (err) {
             console.log(err.stack)
