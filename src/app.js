@@ -1,7 +1,8 @@
 const express = require('express')
+const setRoutes = require('./api/index.js')
 const app = express()
 const port = 3000
-const setRoutes = require('./api/index.js')
+
 
 setRoutes(app)
 
